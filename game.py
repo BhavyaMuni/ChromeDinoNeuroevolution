@@ -14,7 +14,7 @@ import time
 WIN_HEIGHT = 480
 WIN_WIDTH = 640
 MAX_TOT_WIDTH = 25*3
-POPULATION = 7
+POPULATION = 3
 dinos = []
 
 peach = pygame.Color(255, 118, 95)
@@ -77,10 +77,10 @@ def main(dinos, gener, best_score):
         scores = [font.render(f"Score: {str(gen_score)}", True, (0, 0, 0)), font.render(
             f"Alive: {str(len(dinos))}", True, (0, 0, 0))]
         gen = font.render(f"Gen: {gener}", True, (0, 0, 0))
-        clock.tick(30)
+       
         print(gen_score, " ", len(dinos))
-        if best_score >= 7:
-            draw_window(screen, dinos, ground, cacti, gen, scores, best_text)
+       
+        draw_window(screen, dinos, ground, cacti, gen, scores, best_text)
 
 
 def draw_window(win, dinos, ground, cacti, score, scores, best):
@@ -125,12 +125,12 @@ def pickDino(dead_dinos):
     index -= 1
     dino = dead_dinos[index]
     new_dino_brain = Brain(dino.brain)
-    new_dino_brain.mutate(0.15)
+    new_dino_brain.mutate()
     return new_dino_brain
 
 
 def calcFitness(dinos):
-    total_score = sum([dinos[i].score for i in range(len(dinos))])
+    total_score = sum((i.score for i in dinos))
     for dino in dinos:
         dino.fitness = dino.score/total_score
 
