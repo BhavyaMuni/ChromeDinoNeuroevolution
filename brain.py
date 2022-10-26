@@ -4,11 +4,14 @@ from keras import Sequential
 import math
 import numpy as np
 import random
-
+from copy import copy
 WIN_HEIGHT = 480
 WIN_WIDTH = 640
 MAX_TOT_WIDTH = 25*3
-RATE = 0.5
+RATE = 0.2
+
+# tf.config.run_functions_eagerly(False)
+tf.compat.v1.disable_eager_execution()
 
 
 class Brain:
@@ -31,14 +34,15 @@ class Brain:
         return self.model.predict([cactus_x, cactus_width])
 
     def copy(self):
-        weights = self.model.get_weights()
-        new_model = Sequential()
-        new_model.add(Dense(2, input_shape=(1,)))
-        new_model.add(Dense(8, activation='sigmoid'))
-        new_model.add(Dense(1, activation='tanh'))
-        new_model.compile(optimizer='adam', loss='mse')
-        new_model.set_weights(weights)
-        return new_model
+        return copy(self.model)
+        # weights = self.model.get_weights()
+        # new_model = Sequential()
+        # new_model.add(Dense(2, input_shape=(1,)))
+        # new_model.add(Dense(8, activation='sigmoid'))
+        # new_model.add(Dense(1, activation='tanh'))
+        # new_model.compile(optimizer='adam', loss='mse')
+        # new_model.set_weights(weights)
+        # return new_model
 
     def mutate(self):
         weights = self.model.get_weights()

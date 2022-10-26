@@ -14,7 +14,7 @@ import time
 WIN_HEIGHT = 480
 WIN_WIDTH = 640
 MAX_TOT_WIDTH = 25*3
-POPULATION = 3
+POPULATION = 10
 dinos = []
 
 peach = pygame.Color(255, 118, 95)
@@ -78,8 +78,8 @@ def main(dinos, gener, best_score):
             f"Alive: {str(len(dinos))}", True, (0, 0, 0))]
         gen = font.render(f"Gen: {gener}", True, (0, 0, 0))
        
-        print(gen_score, " ", len(dinos))
-       
+        # print(gen_score, " ", len(dinos))
+        clock.tick(30)
         draw_window(screen, dinos, ground, cacti, gen, scores, best_text)
 
 
