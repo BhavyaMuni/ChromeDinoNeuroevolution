@@ -176,13 +176,6 @@ class InputBox:
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
 
-
-
-def start_screen():
-    
-
-
-
 for i in range(POPULATION):
     dinos.append(Dinosaur(Brain(None), pygame.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
 gen = 1
