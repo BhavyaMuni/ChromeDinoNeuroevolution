@@ -35,14 +35,6 @@ class Brain:
 
     def copy(self):
         return copy(self.model)
-        # weights = self.model.get_weights()
-        # new_model = Sequential()
-        # new_model.add(Dense(2, input_shape=(1,)))
-        # new_model.add(Dense(8, activation='sigmoid'))
-        # new_model.add(Dense(1, activation='tanh'))
-        # new_model.compile(optimizer='adam', loss='mse')
-        # new_model.set_weights(weights)
-        # return new_model
 
     def mutate(self):
         weights = self.model.get_weights()
