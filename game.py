@@ -4,25 +4,21 @@ Bhavya Muni
 3/5/2020
 """
 
-
-from dino import *
 import pygame
-from obstacle import *
-import time
+import random
+
+from dino import Dinosaur
+from obstacle import Ground, Cactus
+from brain import Brain
 
 
 WIN_HEIGHT = 480
 WIN_WIDTH = 640
-MAX_TOT_WIDTH = 25*3
+MAX_TOT_WIDTH = 25 * 3
 POPULATION = 10
 dinos = []
 
 best_score = 0
-
-
-
-
-
 
 
 def main(dinos, gener, best_score):
@@ -31,11 +27,11 @@ def main(dinos, gener, best_score):
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     font = pygame.font.SysFont("firacode", 24)
-    scr = pygame.font.SysFont("firacode", 18)
+    # scr = pygame.font.SysFont("firacode", 18)
     ground = Ground(cactus_vel)
     cacti = [Cactus(650, cactus_vel)]
     dead_dinos = []
-    score = 0
+    # score = 0
     clock = pygame.time.Clock()
 
     while True:
@@ -48,15 +44,16 @@ def main(dinos, gener, best_score):
                 pygame.quit()
                 quit()
         for dino in dinos:
-            should_jump = dino.brain.think(cacti[0])[0]
+            should_jump = dino.brain.think(
+                cacti[0].x / WIN_WIDTH, cacti[0].total_width / MAX_TOT_WIDTH
+            )[0]
             if should_jump > 0.5:
                 dino.jump()
 
         if cacti[0].x <= cacti[0].count * (-cacti[0].CACTUS_IMG.get_width()):
             if len(dinos) > 0:
                 gen_score += 1
-            a = cacti.pop(0)
-            del a
+            cacti.pop(0)
             cacti.append(Cactus(random.randint(650, 750), cactus_vel))
 
         ground.move()
@@ -72,10 +69,12 @@ def main(dinos, gener, best_score):
         if cactus_vel < 18:
             cactus_vel += 0.02
         best_text = font.render(f"Best Score: {best_score}", True, (0, 0, 0))
-        scores = [font.render(f"Score: {str(gen_score)}", True, (0, 0, 0)), font.render(
-            f"Alive: {str(len(dinos))}", True, (0, 0, 0))]
+        scores = [
+            font.render(f"Score: {str(gen_score)}", True, (0, 0, 0)),
+            font.render(f"Alive: {str(len(dinos))}", True, (0, 0, 0)),
+        ]
         gen = font.render(f"Gen: {gener}", True, (0, 0, 0))
-       
+
         # print(gen_score, " ", len(dinos))
         clock.tick(30)
         draw_window(screen, dinos, ground, cacti, gen, scores, best_text)
@@ -84,11 +83,9 @@ def main(dinos, gener, best_score):
 def draw_window(win, dinos, ground, cacti, score, scores, best):
     win.blit(pygame.image.load("./assets/white.jpg"), (0, 0))
     win.blit(score, (0, 0))
-    win.blit(
-        best, (WIN_WIDTH - scores[0].get_width() - best.get_width() - 20, 0))
+    win.blit(best, (WIN_WIDTH - scores[0].get_width() - best.get_width() - 20, 0))
     for i, j in enumerate(scores):
-        win.blit(
-            j, (WIN_WIDTH - scores[i].get_width(), i * scores[i].get_height()))
+        win.blit(j, (WIN_WIDTH - scores[i].get_width(), i * scores[i].get_height()))
     ground.draw(win)
     for dino in dinos:
         dino.draw(win)
@@ -105,10 +102,9 @@ GENETIC ALGORITHM
 def nextGen(gen, dead_dinos, score, best_score):
     new_dinos = []
     calcFitness(dead_dinos)
-    if score > best_score:
-        best_score = score
+    best_score = max(score, best_score)
     for i in range(POPULATION):
-        new_dinos.append(Dinosaur(pickDino(dead_dinos), peach))
+        new_dinos.append(Dinosaur(pickDino(dead_dinos), pygame.Color("lightskyblue4")))
 
     del dead_dinos
     main(new_dinos, gen, best_score)
@@ -130,54 +126,18 @@ def pickDino(dead_dinos):
 def calcFitness(dinos):
     total_score = sum((i.score for i in dinos))
     for dino in dinos:
-        dino.fitness = dino.score/total_score
-
-
-class InputBox:
-
-    def __init__(self, x, y, w, h, text=''):
-        self.rect = pg.Rect(x, y, w, h)
-        self.color = COLOR_INACTIVE
-        self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
-        self.active = False
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # If the user clicked on the input_box rect.
-            if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
-                self.active = not self.active
-            else:
-                self.active = False
-            # Change the current color of the input box.
-            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
-        if event.type == pg.KEYDOWN:
-            if self.active:
-                if event.key == pg.K_RETURN:
-                    print(self.text)
-                    self.text = ''
-                elif event.key == pg.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    self.text += event.unicode
-                # Re-render the text.
-                self.txt_surface = FONT.render(self.text, True, self.color)
-
-    def update(self):
-        # Resize the box if the text is too long.
-        width = max(200, self.txt_surface.get_width()+10)
-        self.rect.w = width
-
-    def draw(self, screen):
-        # Blit the text.
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-        # Blit the rect.
-        pygame.draw.rect(screen, self.color, self.rect, 2)
+        dino.fitness = dino.score / total_score
 
 
 for i in range(POPULATION):
-    dinos.append(Dinosaur(Brain(None), pygame.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
+    dinos.append(
+        Dinosaur(
+            Brain(None),
+            pygame.Color(
+                random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+            ),
+        )
+    )
 gen = 1
 
 

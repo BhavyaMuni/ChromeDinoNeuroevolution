@@ -6,7 +6,6 @@ Bhavya Muni
 
 import os
 import pygame
-from brain import *
 
 ASSETS_DIR = "./assets/run/"
 
@@ -17,10 +16,13 @@ WIN_WIDTH = 640
 class Dinosaur:
     ANIMATION_TIME = 3
     IMGS = [
-        pygame.image.load(os.path.join(ASSETS_DIR, i))for i in os.listdir(ASSETS_DIR)]
+        pygame.image.load(os.path.join(ASSETS_DIR, i)) for i in os.listdir(ASSETS_DIR)
+    ]
     IMGS = IMGS[:-2]
-    IMGS = [pygame.transform.scale(i,
-                                   (int(i.get_width()*1.5), int(i.get_height() * 1.5))) for i in IMGS]
+    IMGS = [
+        pygame.transform.scale(i, (int(i.get_width() * 1.5), int(i.get_height() * 1.5)))
+        for i in IMGS
+    ]
 
     # IMGS = [i.set_alpha(100) for i in IMGS]
 
@@ -58,7 +60,7 @@ class Dinosaur:
 
     def animate(self):
         self.img_idx += 1
-        if self.img_idx > len(self.IMGS)-1:
+        if self.img_idx > len(self.IMGS) - 1:
             self.img_idx = 0
 
         self.image = self.IMGS[self.img_idx]
@@ -68,6 +70,7 @@ class Dinosaur:
         if self.image_count % self.ANIMATION_TIME == 0:
             self.animate()
         win.blit(self.image, (self.x, self.y))
+
         # win.blit(self.get_mask(), (self.x, self.y))
 
     def get_mask(self):
